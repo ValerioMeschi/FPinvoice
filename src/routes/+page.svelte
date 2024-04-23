@@ -2,6 +2,9 @@
 	import { onMount } from 'svelte';
 	import { tick } from 'svelte';
 	import Logo from './logo.svelte';
+	let sender = {
+		address: 'Rue de la Paix 18'
+	};
 	function getStyleSheet() {}
 	let pw = 0;
 	function calulateWidth() {
@@ -64,6 +67,7 @@
 <div id="container">
 	<div id="formArea">
 		<div id="form">
+			<input type="text" bind:value={sender.address} />
 			<button on:click={generatePDF}>EXPORT</button>
 		</div>
 	</div>
@@ -74,7 +78,7 @@
 				<div id="header">
 					<div id="sender">
 						<div id="logo"><Logo></Logo></div>
-						<p>Rue de la paix 18</p>
+						<p>{sender.address}</p>
 						<p>1020 Renens</p>
 						<p>Switzerland</p>
 						<p>contact@floatingpoint.ch</p>
@@ -102,7 +106,7 @@
 	}
 	#container {
 		box-sizing: border-box;
-		background-color: rgb(44, 44, 44);
+		background-color: white;
 		width: 100vw;
 		height: 100vh;
 		display: flex;
@@ -123,12 +127,17 @@
 	#formArea {
 		width: 40vw;
 	}
+	#formArea::-webkit-scrollbar {
+		display: none;
+	}
 	#previewArea {
 		width: 60vw;
 	}
 	#invoice {
 		box-sizing: border-box;
-		background-color: rgb(109, 68, 68) !important;
+		background-color: white !important;
+		box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.15);
+		border-radius: 10px;
 	}
 	#page {
 		box-sizing: border-box;
