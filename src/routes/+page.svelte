@@ -8,6 +8,7 @@
 	import RowInput from './rowInput.svelte';
 	import Row from './Row.svelte';
 
+	import Table from './table.svelte';
 	import Logo from './logo.svelte';
 	import { defaults } from './data.js';
 
@@ -31,6 +32,7 @@
 		store.services.push({
 			title: 'Production',
 			unit: '2',
+			sub: [],
 			amount: 1,
 			price: 3000
 		});
@@ -138,9 +140,7 @@
 				<div id="body">
 					<div>
 						<div id="table">
-							{#each store.services as entry}
-								<Row {entry} {labels}></Row>
-							{/each}
+							<Table services={store.services} {labels}></Table>
 						</div>
 					</div>
 				</div>
@@ -249,6 +249,7 @@
 		text-align: end;
 	}
 	#body {
+		font-size: var(--font-small);
 		height: 100%;
 		width: 100%;
 	}

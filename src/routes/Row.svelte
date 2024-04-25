@@ -1,31 +1,57 @@
 <script>
 	export let entry;
 	export let labels;
+	export let header = false;
 </script>
 
-<div id="table">
+<div id="row" class:header>
 	<div>{entry.title}</div>
-	<div>{labels.units[entry.unit]}</div>
+	{#if header}
+		<div>{entry.unit}</div>
+	{:else}
+		<div>{labels.units[entry.unit]}</div>
+	{/if}
+
 	<div>{entry.amount}</div>
-	<div>{entry.price}.-</div>
-	<div>{entry.price * entry.amount}.-</div>
+	<div>
+		{#if !header}
+			CHF
+		{/if}
+		{entry.price}
+	</div>
+	{#if header}
+		<div>{entry.total}</div>
+	{:else}
+		<div>
+			{#if !header}
+				CHF
+			{/if}
+			{entry.price * entry.amount}
+		</div>
+	{/if}
 </div>
 
 <style>
-	#table {
+	#row {
 		width: 100%;
 		display: flex;
 		justify-content: space-between;
+		margin-top: 0.5rem;
 	}
-	#table div {
+	#row div {
 		text-align: left;
 		width: 100%;
 	}
-	#table div:first-child {
+	#row div:first-child {
 		flex-grow: 0.2;
 		width: 180%;
 	}
-	#table div:last-child {
+	#row div:last-child {
 		text-align: right;
+	}
+	#row.header {
+		color: rgb(170, 170, 170);
+		margin-bottom: 1.5rem;
+		font-weight: 700;
 	}
 </style>

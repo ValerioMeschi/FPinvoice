@@ -1,9 +1,25 @@
 <script>
+	import { createEventDispatcher } from 'svelte';
 	export let entry;
 	export let labels;
+	import Button from './Button.svelte';
+	import Input from './Input.svelte';
+
+	const dispatch = createEventDispatcher();
+
+	function addSub() {
+		entry.sub.push('-');
+		entry.sub = entry.sub;
+		console.log(entry);
+	}
+	function remove(event) {
+		event.preventDefault();
+		console.log('delete this');
+		dispatch('remove', { target: entry });
+	}
 </script>
 
-<div>
+<div on:contextmenu={remove}>
 	<input type="text" bind:value={entry.title} />
 	<select bind:value={entry.unit} name="cars" id="cars">
 		<option value="0">{labels.units[0]}</option>
@@ -11,9 +27,13 @@
 		<option value="2">{labels.units[2]}</option>
 		<option value="3">-</option>
 	</select>
-	<input type="text" bind:value={entry.amount} />
-	<input type="text" bind:value={entry.price} />
+	<input type="number" bind:value={entry.amount} />
+	<input class="last" type="text" bind:value={entry.price} />
+	<Button label="+" on:click={addSub}></Button>
 </div>
+{#each entry.sub as sub}
+	<input bind:value={sub} class="sub" type="text" />
+{/each}
 
 <style>
 	div * {
@@ -21,11 +41,13 @@
 	input:first-child {
 		border-radius: 6px 0px 0px 6px;
 		border-width: 2px 2px 2px 2px;
+		width: 200%;
 	}
-	input:last-child {
+	input.last {
 		margin: 0;
 		border-radius: 0 6px 6px 0;
 		border-width: 2px 2px 2px 0px;
+		margin-right: 0.5rem;
 	}
 	input {
 		width: 100%;
@@ -74,7 +96,7 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		padding-bottom: 0.8rem;
+		padding-top: 1rem;
 	}
 	::-moz-selection {
 		/* Code for Firefox */
@@ -85,5 +107,10 @@
 	::selection {
 		color: white;
 		background: black;
+	}
+	input.sub {
+		border-width: 0 0 2px 0;
+		width: 70%;
+		text-align: left;
 	}
 </style>

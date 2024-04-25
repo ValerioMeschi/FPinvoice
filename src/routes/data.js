@@ -50,11 +50,25 @@ export const defaults = {
 	],
     labelsEN:{
         invoice: "INVOICE",
-		units: ["Package", "Day", "Hour"]
+		units: ["Package", "Day", "Hour"],
+		tableHeader: {
+			title: 'Service',
+			unit: "Unit",
+			amount: "Amount",
+			price: "Price",
+			total: "Total",
+		}
     },
     labelsFR:{
         invoice: "FACTURE",
-		units: ["Package", "Jour", "Heure"]
+		units: ["Package", "Jour", "Heure"],
+		tableHeader: {
+			title: 'Service',
+			unit: "Unité",
+			amount: "Quantité",
+			price: "Prix",
+			total: "Total",
+		}
     },
     project:{
         name: "Digilunch",

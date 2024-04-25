@@ -15,7 +15,7 @@
 		box-sizing: border-box;
 		margin: 0;
 		margin-bottom: calc(3px + 0.5rem);
-		padding: 0.3rem 1rem 0.3rem 1rem;
+		padding: 0.3rem 0.7rem 0.3rem 0.7rem;
 		text-transform: uppercase;
 		border: 2px solid black;
 		cursor: pointer;
