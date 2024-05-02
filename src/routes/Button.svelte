@@ -3,16 +3,13 @@
 	const dispatch = createEventDispatcher();
 	const click = () => dispatch('click');
 	export let label = 'button';
+	export let type = 'small';
+	export let col = 'white';
 </script>
 
-<div>
-	<button on:click={click}>{label}</button>
-</div>
+<button class="{type} {col}" on:click={click}>{label}</button>
 
 <style>
-	div {
-		display: inline-block;
-	}
 	button {
 		display: flex;
 		justify-content: center;
@@ -42,5 +39,14 @@
 		transform: translateY(5px);
 		box-shadow: 0px 0px;
 		background-color: white;
+	}
+	.big {
+		width: calc(100%);
+		padding: 1rem;
+		margin: 1rem 0 1rem 0;
+		font-size: 1rem;
+	}
+	.green:hover {
+		background-color: greenyellow;
 	}
 </style>

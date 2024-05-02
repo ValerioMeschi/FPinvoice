@@ -12,7 +12,7 @@
 	export let type = 'text';
 	export let options = [];
 	export let flipped;
-	export let toggleValues = { off: 'off', on: 'on' };
+	export let toggleValues = { off: 'OFF', on: 'ON' };
 
 	function click() {
 		dispatch('click');

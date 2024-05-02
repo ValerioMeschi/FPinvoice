@@ -4,13 +4,14 @@
 	import QRCode from 'qrcode';
 	import { countries } from 'countries-list';
 	import { getCountryData, getEmojiFlag } from 'countries-list';
-
+	import { browser } from '$app/environment';
 	import Button from './Button.svelte';
 	import Toggle from './Toggle.svelte';
 	import Section from './Section.svelte';
 	import Input from './Input.svelte';
 	import RowInput from './rowInput.svelte';
 	import Table from './table.svelte';
+	console.log(getCountryData('CH'));
 
 	import Logo from './logo.svelte';
 	import { defaults } from './data.js';
@@ -19,6 +20,19 @@
 	let countriesList = countriesData.map((entry) => [entry[0], entry[1].name]);
 	let totals = {};
 	let store = structuredClone(defaults);
+
+	let sfx;
+	if (browser) {
+		sfx = new Audio('/sfx/catching.mp3');
+		sfx.volume = 0.5;
+		sfx.pause();
+		if (!localStorage.getItem('default')) {
+			localStorage.setItem('default', JSON.stringify(store));
+			console.log(localStorage);
+		} else {
+			store = JSON.parse(localStorage.getItem('default'));
+		}
+	}
 
 	$: currency = store.currencyToggle ? 'EUR' : 'CHF';
 	$: labels = store.langToggle ? store.labelsFR : store.labelsEN;
@@ -40,7 +54,19 @@
 	}
 
 	function resetDefaults() {
-		store = structuredClone(defaults);
+		if (browser) {
+			store = JSON.parse(localStorage.getItem('default'));
+		}
+	}
+	function saveDefaults() {
+		if (browser) {
+			localStorage.setItem('default', JSON.stringify(store));
+			store = JSON.parse(localStorage.getItem('default'));
+		}
+	}
+	function clearDefaults() {
+		localStorage.setItem('default', JSON.stringify(defaults));
+		store = JSON.parse(localStorage.getItem('default'));
 	}
 
 	function addEntry() {
@@ -89,10 +115,12 @@
 			console.log('Generating PDF ✍🏻');
 			var link = window.URL.createObjectURL(content);
 			var a = document.createElement('a');
-			a.setAttribute('download', 'caca.pdf');
+			a.setAttribute('download', `[INVOICE]-${invoiceID}.pdf`);
 			a.setAttribute('href', link);
 			document.body.appendChild(a);
 			console.log('Donwloading 💾');
+			sfx.currentTime = 0;
+			sfx.play();
 			a.click();
 			document.body.removeChild(a);
 			calulateWidth();
@@ -116,7 +144,14 @@
 	}
 
 	async function generateQR(text) {
-		return await QRCode.toDataURL(text);
+		var opts = {
+			margin: 5,
+			color: {
+				dark: '#000000',
+				light: '#ffffff00'
+			}
+		};
+		return await QRCode.toDataURL(text, opts);
 	}
 </script>
 
@@ -126,7 +161,13 @@
 			<div id="page" style="--page-width:{pw}">
 				<div id="header">
 					<div id="sender">
-						<div id="logo"><Logo></Logo></div>
+						{#if store.logo}
+							<div id="logo"><Logo></Logo></div>
+							<p>{store.sender.name}</p>
+						{:else}
+							<h3>{store.sender.name}</h3>
+						{/if}
+
 						<p>{store.sender.address.street} {store.sender.address.number}</p>
 						<p>{store.sender.address.code} {store.sender.address.region}</p>
 						<p>
@@ -181,6 +222,7 @@
 							</div>
 							<div>
 								<h3>{labels.amount.toUpperCase()}</h3>
+								pute
 								<p>{totals.ttc}</p>
 							</div>
 						</div>
@@ -228,7 +270,6 @@
 				<Input bind:value={store.sender.address.mail} label="mail"></Input>
 				<Input bind:value={store.sender.address.website} label="website"></Input>
 
-				<Input type="iban" bind:value={store.sender.iban} label="IBAN"></Input>
 				<br />
 			</Section>
 			<Section title="Receiver">
@@ -250,12 +291,35 @@
 				<Input bind:value={store.project.contact} label="Contact"></Input>
 			</Section>
 			<Section title="Services">
-				<Button label="+ row  (•◡•) /" on:click={addEntry}></Button>
+				<Button type="big" label="+ row  (•◡•) /" on:click={addEntry}></Button>
 				{#each store.services as entry}
 					<RowInput on:remove={deleteEntry} bind:entry {labels}></RowInput>
 				{/each}
 			</Section>
+			<Section title="Payment">
+				<Input type="iban" bind:value={store.sender.iban} label="IBAN"></Input>
 
+				<Input
+					bind:flipped={store.currencyToggle}
+					type="toggle"
+					label="Currency"
+					toggleValues={{ on: 'EUR', off: 'CHF' }}
+				></Input>
+				<Input
+					bind:flipped={store.exemptToggle}
+					type="toggle"
+					label="VAT exempt"
+					toggleValues={{ on: 'ON', off: 'OFF' }}
+				></Input>
+				<Input
+					bind:flipped={store.tvaToggle}
+					type="toggle"
+					label="VAT incl."
+					toggleValues={{ on: 'ON', off: 'OFF' }}
+				></Input>
+				<Input bind:value={store.rate} type="number" label="VAT %"></Input>
+				<Input bind:value={store.vatno} type="text" label="VAT N°"></Input>
+			</Section>
 			<Section title="Controls">
 				<div id="controls">
 					<div>
@@ -265,44 +329,27 @@
 							label="Language"
 							toggleValues={{ on: 'FR', off: 'EN' }}
 						></Input>
-						<Input
-							bind:value={store.vatno}
-							on:click={resetDefaults}
-							type="button"
-							label="reset defaults°"
-							btnText="Reset"
-						></Input>
-						<Input
-							bind:flipped={store.currencyToggle}
-							type="toggle"
-							label="Currency"
-							toggleValues={{ on: 'EUR', off: 'CHF' }}
-						></Input>
-						<Input
-							bind:flipped={store.exemptToggle}
-							type="toggle"
-							label="VAT exempt"
-							toggleValues={{ on: 'ON', off: 'OFF' }}
-						></Input>
-						<Input
-							bind:flipped={store.tvaToggle}
-							type="toggle"
-							label="VAT incl."
-							toggleValues={{ on: 'ON', off: 'OFF' }}
-						></Input>
-						<Input bind:value={store.rate} type="number" label="VAT %"></Input>
-						<Input bind:value={store.vatno} type="text" label="VAT N°"></Input>
+						<Input bind:flipped={store.logo} type="toggle" label="Logo"></Input>
 					</div>
+
+					<Input on:click={saveDefaults} type="button" label="save defaults" btnText="SAVE"></Input>
+					<Input on:click={resetDefaults} type="button" label="reset defaults" btnText="RESET"
+					></Input>
+					<Input on:click={clearDefaults} type="button" label="clear defaults" btnText="CLEAR"
+					></Input>
 				</div>
 			</Section>
-			<Button label="download" on:click={generatePDF} />
+			<div id="save">
+				<Button col="green" type="big" label="★SAVE★" on:click={generatePDF} />
+				<Button col="green" type="big" label=" ★LOAD★" on:click={generatePDF} />
+			</div>
+			<Button col="green" type="big" label="✱ download ⸜(രᴗര๑)⸝ ✱" on:click={generatePDF} />
 		</div>
 	</div>
 </div>
 
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans&display=swap');
-
+	@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Nanum+Gothic+Coding:wght@400;700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Space+Mono:wght@400;700&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 	:global(body) {
 		padding: 0;
 		margin: 0;
@@ -311,8 +358,13 @@
 		justify-content: center;
 		background-color: rgb(250, 250, 250);
 	}
+
+	:global(:root) {
+		--font: 'IBM Plex Mono', monospace;
+		font-family: var(--font);
+	}
 	#container * {
-		font-family: 'IBM Plex Mono', monospace;
+		font-family: var(--font);
 	}
 	#container {
 		box-sizing: border-box;
@@ -366,7 +418,7 @@
 		--font-medium: calc(var(--page-width) * 0.025);
 		--font-big: calc(var(--page-width) * 0.035);
 		padding: calc(var(--page-width) * 0.05);
-		font-family: 'IBM Plex Sans', sans-serif;
+		font-family: var(--font);
 	}
 
 	#page p {
@@ -421,7 +473,7 @@
 	}
 	#footer h3 {
 		font-size: var(--font-small);
-		color: rgb(125, 125, 125);
+		color: rgb(170, 170, 170);
 	}
 
 	#footer #qr {
@@ -449,5 +501,12 @@
 		flex-direction: column;
 		width: calc(100% / 3);
 		padding-right: 2%;
+	}
+
+	#save {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		gap: 1rem;
 	}
 </style>

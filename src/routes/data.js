@@ -73,4 +73,5 @@ export const defaults = {
 	tvaToggle: false,
 	exemptToggle: false,
 	langToggle : true,
+	logo: true,
 }
