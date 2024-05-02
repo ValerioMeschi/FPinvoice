@@ -6,20 +6,23 @@
 	import { getCountryData, getEmojiFlag } from 'countries-list';
 	import { browser } from '$app/environment';
 	import Button from './Button.svelte';
-	import Toggle from './Toggle.svelte';
+	import SavePicker from './SavePicker.svelte';
 	import Section from './Section.svelte';
 	import Input from './Input.svelte';
 	import RowInput from './rowInput.svelte';
 	import Table from './table.svelte';
-	console.log(getCountryData('CH'));
 
 	import Logo from './logo.svelte';
 	import { defaults } from './data.js';
+	import SaveFile from './SaveFile.svelte';
 
 	let countriesData = Array.from(Object.entries(countries));
 	let countriesList = countriesData.map((entry) => [entry[0], entry[1].name]);
 	let totals = {};
 	let store = structuredClone(defaults);
+
+	let savefiles = [];
+	let savePicker;
 
 	let sfx;
 	if (browser) {
@@ -31,6 +34,9 @@
 			console.log(localStorage);
 		} else {
 			store = JSON.parse(localStorage.getItem('default'));
+		}
+		if (localStorage.getItem('save')) {
+			savefiles = JSON.parse(localStorage.getItem('save'));
 		}
 	}
 
@@ -68,6 +74,31 @@
 		localStorage.setItem('default', JSON.stringify(defaults));
 		store = JSON.parse(localStorage.getItem('default'));
 	}
+	function saveInvoice() {
+		if (browser) {
+			let existing = null;
+			console.log(savefiles);
+			savefiles.forEach((save) => {
+				if (
+					save.project.name == store.project.name &&
+					save.project.number == store.project.number
+				) {
+					existing = save;
+				}
+			});
+			if (existing != null) {
+				console.log('deleting old save', existing);
+				savefiles.splice(savefiles.indexOf(existing), 1);
+			}
+			console.log('SAVING');
+			store.datesaved = formatDate;
+			store.timesaved = date.toLocaleTimeString();
+
+			savefiles.push(structuredClone(store));
+			savefiles = savefiles;
+			localStorage.setItem('save', JSON.stringify(savefiles));
+		}
+	}
 
 	function addEntry() {
 		store.services.push({
@@ -83,6 +114,10 @@
 	function deleteEntry(event) {
 		store.services.splice(store.services.indexOf(event.detail.target), 1);
 		store.services = store.services;
+	}
+	function openSavePicker() {
+		console.log('opening save picker');
+		savePicker.toggle();
 	}
 
 	async function generatePDF() {
@@ -222,7 +257,6 @@
 							</div>
 							<div>
 								<h3>{labels.amount.toUpperCase()}</h3>
-								pute
 								<p>{totals.ttc}</p>
 							</div>
 						</div>
@@ -340,13 +374,14 @@
 				</div>
 			</Section>
 			<div id="save">
-				<Button col="green" type="big" label="★SAVE★" on:click={generatePDF} />
-				<Button col="green" type="big" label=" ★LOAD★" on:click={generatePDF} />
+				<Button col="green" type="big" label="★SAVE★" on:click={saveInvoice} />
+				<Button col="green" type="big" label=" ★LOAD★" on:click={openSavePicker} />
 			</div>
 			<Button col="green" type="big" label="✱ download ⸜(രᴗര๑)⸝ ✱" on:click={generatePDF} />
 		</div>
 	</div>
 </div>
+<SavePicker bind:store bind:savefiles bind:this={savePicker}></SavePicker>
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Nanum+Gothic+Coding:wght@400;700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Space+Mono:wght@400;700&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
