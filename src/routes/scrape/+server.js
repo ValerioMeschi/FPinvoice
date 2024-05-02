@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 
+
 export async function POST({ request }) {
     const data = await request.json();
     const browser = await puppeteer.launch({headless:true, args: ['--no-sandbox', '--disable-setuid-sandbox']});

@@ -1,44 +1,27 @@
 export const defaults = {
     sender:{
-        name: "Floating Point Studio Sàrl.",
-        address:[
-		{
-			label: 'Street',
-			value: 'Rue de la Paix 18'
-		},
-		{
-			label: 'Region',
-			value: '1020 Renens'
-		},
-		{
-			label: 'Country',
-			value: 'Suisse'
-		},
-		{
-			label: 'Mail',
-			value: 'contact@floatingpoint.ch'
-		},
-		{
-			label: 'Website',
-			value: 'www.floatingpoint.ch'
+        name: "Floating Point Studio Sàrl",
+		iban: "CH37 0900 0000 1594 9095 4",
+        address:{
+			street: 'Rue de la Paix',
+			number: '18',
+			code: '1020',
+			region:'Renens',
+			country:'CH',
+			mail: 'contact@floatingpoint.ch',
+			website: 'www.floatingpoint.ch'
 		}
-	]},
+	},
     receiver:{
         name: "Jerôme",
-        address:[
-		{
-			label: 'Street',
-			value: 'Rue de la Paix 18'
-		},
-		{
-			label: 'Region',
-			value: '1020 Renens'
-		},
-		{
-			label: 'Country',
-			value: 'Suisse'
+            address:{
+			street: 'ch. Charles-Georg',
+			number: '27',
+			code: '1209',
+			region:'Genève',
+			country:'CH',
 		}
-	]},
+	},
     services:[
 		{
 		title: 'Production',
@@ -57,7 +40,9 @@ export const defaults = {
 			amount: "Amount",
 			price: "Price",
 			total: "Total",
-		}
+		},
+		tva: "VAT",
+		HT: "ET"
     },
     labelsFR:{
         invoice: "FACTURE",
@@ -68,10 +53,14 @@ export const defaults = {
 			amount: "Quantité",
 			price: "Prix",
 			total: "Total",
-		}
+		},
+		tva: "TVA",
+		HT: "HT"
     },
     project:{
         name: "Digilunch",
         number: 1
     },
+	rate: 8.1,
+	vatno: "CHE-296.828.892"
 }

@@ -1,31 +1,50 @@
 <script>
 	import { onMount } from 'svelte';
 	import { tick } from 'svelte';
+	import QRCode from 'qrcode';
+	import { countries } from 'countries-list';
+	import { getCountryData, getEmojiFlag } from 'countries-list';
+
 	import Button from './Button.svelte';
 	import Toggle from './Toggle.svelte';
 	import Section from './Section.svelte';
 	import Input from './Input.svelte';
 	import RowInput from './rowInput.svelte';
-	import Row from './Row.svelte';
-
 	import Table from './table.svelte';
+
 	import Logo from './logo.svelte';
 	import { defaults } from './data.js';
 
-	let langToggle;
-	$: labels = langToggle ? defaults.labelsFR : defaults.labelsEN;
-	let store = defaults;
+	let countriesData = Array.from(Object.entries(countries));
+	let countriesList = countriesData.map((entry) => [entry[0], entry[1].name]);
+	let totals = {};
+	let langToggle = true;
+	let currencyToggle;
+	let tvaToggle;
+	let exemptToggle;
+	$: currency = currencyToggle ? 'EUR' : 'CHF';
+	let store = structuredClone(defaults);
+	$: labels = langToggle ? store.labelsFR : store.labelsEN;
 	let projectName = '';
 	const date = new Date();
 	let year = date.getFullYear().toString();
 	let formatDate = `${pad(date.getDate(), 2)}.${pad(date.getMonth() + 1, 2)}.${year.slice(2)}`;
 	let pw = 0;
+
 	$: invoiceID = `I-${store.project.name.slice(0, 3).toLocaleUpperCase()}${pad(store.project.number, 2)}${year.slice(2)}`;
+	let qr = '';
+
+	$: qrString = `SPC\n0200\n1\n${store.sender.iban}\nS\n${store.sender.name}\n${store.sender.address.street}\n${store.sender.address.number}\n${store.sender.address.code}\n${store.sender.address.region}\n${store.sender.address.country}\n\n\n\n\n\n\n\n${totals.ttc}\n${currency}\nS\n${store.receiver.name}\n\n\n${store.receiver.address.code}\n${store.receiver.address.region}\n${store.receiver.address.country}\nSCOR\n\n${invoiceID}\nEPD`;
+	$: generateQR(qrString).then((url) => (qr = url));
 
 	function pad(num, size) {
 		num = num.toString();
 		while (num.length < size) num = '0' + num;
 		return num;
+	}
+
+	function resetDefaults() {
+		store = structuredClone(defaults);
 	}
 
 	function addEntry() {
@@ -36,6 +55,11 @@
 			amount: 1,
 			price: 3000
 		});
+		store.services = store.services;
+	}
+
+	function deleteEntry(event) {
+		store.services.splice(store.services.indexOf(event.detail.target), 1);
 		store.services = store.services;
 	}
 
@@ -85,89 +109,176 @@
 		pw = document.querySelector('#invoice').offsetWidth + 'px';
 	}
 	onMount(() => {
+		//afterDomload
 		calulateWidth();
 		window.addEventListener('resize', calulateWidth);
 	});
+
+	async function setNewTotal() {
+		//let text = `SPC\n0200\n1\n${store.data.iban}\nS\nFloating Point Studio Sàrl\nRue de la Paix\n18\n1020\nRenens VD\nCH\n\n\n\n\n\n\n\n12345.00\nCHF\nS\nJerôme\n\n\n1209\nGenève\nCH\nSCOR\nRF34JL02\n\nEPD`;
+		//qr = await generateQR(text);
+	}
+
+	async function generateQR(text) {
+		return await QRCode.toDataURL(text);
+	}
 </script>
 
 <div id="container">
-	<div id="formArea">
-		<div id="form">
-			<Section title="Sender"></Section>
-			<Input bind:value={store.sender.name} label="name"></Input>
-			{#each store.sender.address as entry}
-				<Input bind:value={entry.value} label={entry.label}></Input>
-			{/each}
-			<br />
-			<Section title="Receiver"></Section>
-			<Input bind:value={store.receiver.name} label="name"></Input>
-			{#each store.receiver.address as entry}
-				<Input bind:value={entry.value} label={entry.label}></Input>
-			{/each}
-			<Section title="Project"></Section>
-			<Input bind:value={store.project.name} label="Name"></Input>
-			<Input bind:value={store.project.number} label="Invoice N°"></Input>
-			<Section title="Services"></Section>
-			{#each store.services as entry}
-				<RowInput bind:entry {labels}></RowInput>
-			{/each}
-			<Button label="+" on:click={addEntry}></Button>
-			<Button label="download" on:click={generatePDF} />
-			<Toggle bind:flipped={langToggle}></Toggle>
-		</div>
-	</div>
-
 	<div id="previewArea">
 		<div id="invoice">
 			<div id="page" style="--page-width:{pw}">
 				<div id="header">
 					<div id="sender">
 						<div id="logo"><Logo></Logo></div>
-						{#each store.sender.address as entry}
-							<p>{entry.value}</p>
-						{/each}
+						<p>{store.sender.address.street} {store.sender.address.number}</p>
+						<p>{store.sender.address.code} {store.sender.address.region}</p>
+						<p>
+							{getCountryData(store.sender.address.country).name}
+							{store.sender.address.country}
+						</p>
+						<p>{store.sender.address.mail}</p>
+						<p>{store.sender.address.website}</p>
 					</div>
 					<div id="receiver">
 						<h3>{labels.invoice}</h3>
 						<p>{invoiceID}</p>
 						<p>{formatDate}</p>
 						<h3>{store.receiver.name}</h3>
-						{#each store.receiver.address as entry}
-							<p>{entry.value}</p>
-						{/each}
+						<p>{store.receiver.address.street} {store.receiver.address.number}</p>
+						<p>{store.receiver.address.code} {store.receiver.address.region}</p>
+						<p>
+							{getCountryData(store.receiver.address.country).name}
+							{store.receiver.address.country}
+						</p>
 					</div>
 				</div>
 				<div id="body">
 					<div>
 						<div id="table">
-							<Table services={store.services} {labels}></Table>
+							<Table
+								on:newTotal={setNewTotal}
+								{currencyToggle}
+								{exemptToggle}
+								{tvaToggle}
+								tva={store.rate}
+								bind:totals
+								services={store.services}
+								{labels}
+							></Table>
 						</div>
 					</div>
 				</div>
-				<div id="footer"></div>
+				<div id="footer">
+					<img src={qr} alt="" />
+				</div>
 			</div>
+		</div>
+	</div>
+	<div id="formArea">
+		<div id="form">
+			<Section title="Sender">
+				<Input bind:value={store.sender.name} label="name"></Input>
+				<Input bind:value={store.sender.address.street} label="street"></Input>
+				<Input type="number" bind:value={store.sender.address.number} label="N°"></Input>
+				<Input type="number" bind:value={store.sender.address.code} label="Code"></Input>
+				<Input bind:value={store.sender.address.region} label="Region"></Input>
+				<Input
+					type="options"
+					options={countriesList}
+					bind:value={store.sender.address.country}
+					label="Country"
+				></Input>
+				<Input bind:value={store.sender.address.mail} label="mail"></Input>
+				<Input bind:value={store.sender.address.website} label="website"></Input>
+
+				<Input type="iban" bind:value={store.sender.iban} label="IBAN"></Input>
+				<br />
+			</Section>
+			<Section title="Receiver">
+				<Input bind:value={store.receiver.name} label="name"></Input>
+				<Input bind:value={store.receiver.address.street} label="street"></Input>
+				<Input type="number" bind:value={store.receiver.address.number} label="N°"></Input>
+				<Input type="number" bind:value={store.receiver.address.code} label="Code"></Input>
+				<Input bind:value={store.receiver.address.region} label="Region"></Input>
+				<Input
+					type="options"
+					options={countriesList}
+					bind:value={store.receiver.address.country}
+					label="Country"
+				></Input>
+			</Section>
+			<Section title="Project">
+				<Input bind:value={store.project.name} label="Name"></Input>
+				<Input bind:value={store.project.number} label="Invoice N°"></Input>
+			</Section>
+			<Section title="Services">
+				<Button label="+ row  (•◡•) /" on:click={addEntry}></Button>
+				{#each store.services as entry}
+					<RowInput on:remove={deleteEntry} bind:entry {labels}></RowInput>
+				{/each}
+			</Section>
+
+			<Section title="Controls">
+				<div id="controls">
+					<div>
+						<Input
+							bind:flipped={langToggle}
+							type="toggle"
+							label="Language"
+							toggleValues={{ on: 'FR', off: 'EN' }}
+						></Input>
+						<Input
+							bind:flipped={currencyToggle}
+							type="toggle"
+							label="Currency"
+							toggleValues={{ on: 'EUR', off: 'CHF' }}
+						></Input>
+						<Input
+							bind:flipped={exemptToggle}
+							type="toggle"
+							label="VAT exempt"
+							toggleValues={{ on: 'ON', off: 'OFF' }}
+						></Input>
+						<Input
+							bind:flipped={tvaToggle}
+							type="toggle"
+							label="VAT incl."
+							toggleValues={{ on: 'ON', off: 'OFF' }}
+						></Input>
+						<Input bind:value={store.rate} type="number" label="VAT %"></Input>
+						<Input bind:value={store.vatno} type="text" label="VAT N°"></Input>
+					</div>
+				</div>
+			</Section>
+			<Button on:click={resetDefaults} label="reset defaults"></Button>
+			<Button label="download" on:click={generatePDF} />
 		</div>
 	</div>
 </div>
 
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans&display=swap');
 
 	:global(body) {
 		padding: 0;
 		margin: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: rgb(250, 250, 250);
 	}
 	#container * {
-		font-family: 'IBM Plex Sans', sans-serif;
+		font-family: 'IBM Plex Mono', monospace;
 	}
 	#container {
 		box-sizing: border-box;
-		background-color: white;
 		width: 100vw;
 		height: 100vh;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-around;
+		max-width: 1500px;
 	}
 	#invoice * {
 		font-weight: 400;

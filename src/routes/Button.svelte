@@ -5,9 +5,14 @@
 	export let label = 'button';
 </script>
 
-<button on:click={click}>{label}</button>
+<div>
+	<button on:click={click}>{label}</button>
+</div>
 
 <style>
+	div {
+		display: inline-block;
+	}
 	button {
 		display: flex;
 		justify-content: center;

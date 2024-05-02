@@ -8,7 +8,7 @@
 	const dispatch = createEventDispatcher();
 
 	function addSub() {
-		entry.sub.push('-');
+		entry.sub.push('');
 		entry.sub = entry.sub;
 		console.log(entry);
 	}
@@ -17,26 +17,38 @@
 		console.log('delete this');
 		dispatch('remove', { target: entry });
 	}
+	function removeSub(event) {
+		event.preventDefault();
+		entry.sub.splice(entry.sub.indexOf(event.target.value), 1);
+		entry.sub = entry.sub;
+	}
 </script>
 
 <div on:contextmenu={remove}>
 	<input type="text" bind:value={entry.title} />
-	<select bind:value={entry.unit} name="cars" id="cars">
+	<select bind:value={entry.unit}>
 		<option value="0">{labels.units[0]}</option>
 		<option value="1">{labels.units[1]}</option>
 		<option value="2">{labels.units[2]}</option>
 		<option value="3">-</option>
 	</select>
 	<input type="number" bind:value={entry.amount} />
-	<input class="last" type="text" bind:value={entry.price} />
-	<Button label="+" on:click={addSub}></Button>
+	<input class="last" type="number" bind:value={entry.price} />
+	<Button label="✱" on:click={addSub}></Button>
 </div>
 {#each entry.sub as sub}
-	<input bind:value={sub} class="sub" type="text" />
+	<input bind:value={sub} on:contextmenu={removeSub} class="sub" type="text" />
 {/each}
 
 <style>
-	div * {
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	/* Firefox */
+	input[type='number'] {
+		-moz-appearance: textfield;
 	}
 	input:first-child {
 		border-radius: 6px 0px 0px 6px;
