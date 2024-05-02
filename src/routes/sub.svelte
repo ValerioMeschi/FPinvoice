@@ -10,7 +10,7 @@
 </script>
 
 <div id="row" on:contextmenu={remove}>
-	<div>{text}</div>
+	<div>.{text}</div>
 </div>
 
 <style>
@@ -18,8 +18,8 @@
 		width: 100%;
 		display: flex;
 		justify-content: space-between;
-		margin-bottom: 0rem;
+		margin-bottom: 0;
 		text-align: left;
-		padding-left: 2rem;
+		padding-left: 1%;
 	}
 </style>

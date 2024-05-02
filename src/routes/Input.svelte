@@ -1,13 +1,22 @@
 <script>
 	import Toggle from './Toggle.svelte';
+	import Button from './Button.svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { getEmojiFlag } from 'countries-list';
 
+	const dispatch = createEventDispatcher();
+
+	export let btnText = 'Button';
 	export let label = 'Label';
 	export let value = 'write something here';
 	export let type = 'text';
 	export let options = [];
-	export let flipped = false;
+	export let flipped;
 	export let toggleValues = { off: 'off', on: 'on' };
+
+	function click() {
+		dispatch('click');
+	}
 </script>
 
 <div>
@@ -35,6 +44,8 @@
 		/>
 	{:else if type == 'toggle'}
 		<Toggle values={toggleValues} bind:flipped></Toggle>
+	{:else if type == 'button'}
+		<Button label={btnText} on:click={click}></Button>
 	{/if}
 </div>
 

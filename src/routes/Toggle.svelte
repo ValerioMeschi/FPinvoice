@@ -1,5 +1,5 @@
 <script>
-	export let flipped = false;
+	export let flipped;
 	function sw() {
 		flipped = !flipped;
 	}

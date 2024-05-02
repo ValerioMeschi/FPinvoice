@@ -18,14 +18,10 @@
 	let countriesData = Array.from(Object.entries(countries));
 	let countriesList = countriesData.map((entry) => [entry[0], entry[1].name]);
 	let totals = {};
-	let langToggle = true;
-	let currencyToggle;
-	let tvaToggle;
-	let exemptToggle;
-	$: currency = currencyToggle ? 'EUR' : 'CHF';
 	let store = structuredClone(defaults);
-	$: labels = langToggle ? store.labelsFR : store.labelsEN;
-	let projectName = '';
+
+	$: currency = store.currencyToggle ? 'EUR' : 'CHF';
+	$: labels = store.langToggle ? store.labelsFR : store.labelsEN;
 	const date = new Date();
 	let year = date.getFullYear().toString();
 	let formatDate = `${pad(date.getDate(), 2)}.${pad(date.getMonth() + 1, 2)}.${year.slice(2)}`;
@@ -158,9 +154,9 @@
 						<div id="table">
 							<Table
 								on:newTotal={setNewTotal}
-								{currencyToggle}
-								{exemptToggle}
-								{tvaToggle}
+								currencyToggle={store.currencyToggle}
+								exemptToggle={store.exemptToggle}
+								tvaToggle={store.tvaToggle}
 								tva={store.rate}
 								bind:totals
 								services={store.services}
@@ -170,7 +166,47 @@
 					</div>
 				</div>
 				<div id="footer">
-					<img src={qr} alt="" />
+					<div id="info">
+						<h3>{labels.account.toUpperCase()}</h3>
+						<p>{store.sender.name}</p>
+						<p>{store.sender.address.street} {store.sender.address.number}</p>
+						<p>{store.sender.address.code} {store.sender.address.region}</p>
+						<p>{getCountryData(store.receiver.address.country).name}</p>
+						<h3>IBAN</h3>
+						<p>{store.sender.iban}</p>
+						<div class="split">
+							<div>
+								<h3>{labels.currency.toUpperCase()}</h3>
+								<p>{currency}</p>
+							</div>
+							<div>
+								<h3>{labels.amount.toUpperCase()}</h3>
+								<p>{totals.ttc}</p>
+							</div>
+						</div>
+					</div>
+					<div id="qr">
+						<img src={qr} alt="" />
+					</div>
+					<div id="contact">
+						<h3>{labels.tva} N°</h3>
+						<p>{store.vatno}</p>
+
+						<h3>REFERENCE</h3>
+						<p>{invoiceID}</p>
+						<h3>CONTACT</h3>
+						<p>{store.sender.address.mail}</p>
+						<div class="split">
+							<div>
+								<h3>{labels.currency.toUpperCase()}</h3>
+								<p>{currency}</p>
+							</div>
+							<div>
+								<h3>{labels.amount.toUpperCase()}</h3>
+								<p>{totals.ttc}</p>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -211,6 +247,7 @@
 			<Section title="Project">
 				<Input bind:value={store.project.name} label="Name"></Input>
 				<Input bind:value={store.project.number} label="Invoice N°"></Input>
+				<Input bind:value={store.project.contact} label="Contact"></Input>
 			</Section>
 			<Section title="Services">
 				<Button label="+ row  (•◡•) /" on:click={addEntry}></Button>
@@ -223,25 +260,32 @@
 				<div id="controls">
 					<div>
 						<Input
-							bind:flipped={langToggle}
+							bind:flipped={store.langToggle}
 							type="toggle"
 							label="Language"
 							toggleValues={{ on: 'FR', off: 'EN' }}
 						></Input>
 						<Input
-							bind:flipped={currencyToggle}
+							bind:value={store.vatno}
+							on:click={resetDefaults}
+							type="button"
+							label="reset defaults°"
+							btnText="Reset"
+						></Input>
+						<Input
+							bind:flipped={store.currencyToggle}
 							type="toggle"
 							label="Currency"
 							toggleValues={{ on: 'EUR', off: 'CHF' }}
 						></Input>
 						<Input
-							bind:flipped={exemptToggle}
+							bind:flipped={store.exemptToggle}
 							type="toggle"
 							label="VAT exempt"
 							toggleValues={{ on: 'ON', off: 'OFF' }}
 						></Input>
 						<Input
-							bind:flipped={tvaToggle}
+							bind:flipped={store.tvaToggle}
 							type="toggle"
 							label="VAT incl."
 							toggleValues={{ on: 'ON', off: 'OFF' }}
@@ -251,7 +295,6 @@
 					</div>
 				</div>
 			</Section>
-			<Button on:click={resetDefaults} label="reset defaults"></Button>
 			<Button label="download" on:click={generatePDF} />
 		</div>
 	</div>
@@ -361,12 +404,50 @@
 	}
 	#body {
 		font-size: var(--font-small);
-		height: 100%;
+		min-height: 30%;
+		max-height: 60%;
+		overflow: hidden;
 		width: 100%;
 	}
 
 	#footer {
-		min-height: calc(var(--page-width) * 0.3);
+		min-height: calc(var(--page-width) * 0.32);
 		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		font-size: var(--font-small);
+	}
+	#footer div {
+	}
+	#footer h3 {
+		font-size: var(--font-small);
+		color: rgb(125, 125, 125);
+	}
+
+	#footer #qr {
+		width: calc(100% / 3);
+	}
+	#qr img {
+		width: calc(100%);
+	}
+	#footer .split {
+		display: flex;
+		margin-top: calc(var(--page-width) * 0.025);
+		width: 100%;
+	}
+	#footer .split div {
+		width: 100%;
+	}
+	#footer #contact {
+		display: flex;
+		flex-direction: column;
+		width: calc(100% / 3);
+		padding-left: 2%;
+	}
+	#footer #info {
+		display: flex;
+		flex-direction: column;
+		width: calc(100% / 3);
+		padding-right: 2%;
 	}
 </style>

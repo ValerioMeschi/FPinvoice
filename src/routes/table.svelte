@@ -27,7 +27,7 @@
 		} else {
 			let dividend = (100 + vat) / 100;
 			console.log(dividend);
-			totals = { t: v, tva: ((v / dividend) * vat) / 100, ttc: v / dividend };
+			totals = { t: v / dividend, tva: ((v / dividend) * vat) / 100, ttc: v };
 		}
 		dispatch('newTotal');
 		return v;
@@ -96,9 +96,8 @@
 
 <style>
 	#table {
-		margin-top: 20%;
 	}
 	#totals {
-		margin-top: 5%;
+		margin-top: 3%;
 	}
 </style>

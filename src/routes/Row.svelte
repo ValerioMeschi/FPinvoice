@@ -70,11 +70,11 @@
 		padding: 0;
 	}
 	.total {
-		padding: 0.2% 0;
-		text-indent: 5%;
 		color: rgb(125, 125, 125);
 	}
 	#row.black .total {
+		text-indent: 5%;
+		padding: 0.2% 0;
 		background-color: black;
 		color: white;
 	}

@@ -42,7 +42,10 @@ export const defaults = {
 			total: "Total",
 		},
 		tva: "VAT",
-		HT: "ET"
+		HT: "ET",
+		account: "Account ",
+		currency: "currency",
+		amount: "amount"
     },
     labelsFR:{
         invoice: "FACTURE",
@@ -55,12 +58,19 @@ export const defaults = {
 			total: "Total",
 		},
 		tva: "TVA",
-		HT: "HT"
+		HT: "HT",
+		account: "Compte",
+		currency: "devise",
+		amount: "montant",
     },
     project:{
         name: "Digilunch",
-        number: 1
+        number: 1,
     },
 	rate: 8.1,
-	vatno: "CHE-296.828.892"
+	vatno: "CHE-296.828.892",
+	currencyToggle: false,
+	tvaToggle: false,
+	exemptToggle: false,
+	langToggle : true,
 }
