@@ -13,8 +13,9 @@
 	import Table from './table.svelte';
 
 	import Logo from './logo.svelte';
-	import { defaults } from './data.js';
-	import SaveFile from './SaveFile.svelte';
+
+	export let data;
+	let  defaults = data.contents;
 
 	let countriesData = Array.from(Object.entries(countries));
 	let countriesList = countriesData.map((entry) => [entry[0], entry[1].name]);
@@ -23,6 +24,9 @@
 
 	let savefiles = [];
 	let savePicker;
+
+
+	
 
 	let sfx;
 	if (browser) {
@@ -162,6 +166,19 @@
 		} else {
 			throw new Error('Something went wrong on the server! 😱');
 		}
+	}
+
+	async function saveJSON(){
+		let content = JSON.stringify(store);                              
+		let file = new Blob([content], {type: "json"});
+		let a = document.createElement('a');
+			a.setAttribute('download', `[INVOICE]-${invoiceID}.json`);
+			a.href = URL.createObjectURL(file);
+			a.click();
+	}
+
+	async function loadJSON(){
+
 	}
 
 	function calulateWidth() {
@@ -373,7 +390,11 @@
 					></Input>
 				</div>
 			</Section>
-			<div id="save">
+			<div class="save">
+				<Button col="green" type="big" label="GET JSON" on:click={saveJSON} />
+				<Button col="green" type="big" label=" ★LOAD JSON★" on:click={loadJSON} />
+			</div>
+			<div class="save">
 				<Button col="green" type="big" label="★SAVE★" on:click={saveInvoice} />
 				<Button col="green" type="big" label=" ★LOAD★" on:click={openSavePicker} />
 			</div>
@@ -538,7 +559,7 @@
 		padding-right: 2%;
 	}
 
-	#save {
+	.save {
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
