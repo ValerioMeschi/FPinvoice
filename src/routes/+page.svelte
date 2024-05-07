@@ -15,7 +15,7 @@
 	import Logo from './logo.svelte';
 
 	export let data;
-	let  defaults = data.contents;
+	let defaults = data.contents;
 
 	let countriesData = Array.from(Object.entries(countries));
 	let countriesList = countriesData.map((entry) => [entry[0], entry[1].name]);
@@ -24,9 +24,6 @@
 
 	let savefiles = [];
 	let savePicker;
-
-
-	
 
 	let sfx;
 	if (browser) {
@@ -168,18 +165,16 @@
 		}
 	}
 
-	async function saveJSON(){
-		let content = JSON.stringify(store);                              
-		let file = new Blob([content], {type: "json"});
+	async function saveJSON() {
+		let content = JSON.stringify(store);
+		let file = new Blob([content], { type: 'json' });
 		let a = document.createElement('a');
-			a.setAttribute('download', `[INVOICE]-${invoiceID}.json`);
-			a.href = URL.createObjectURL(file);
-			a.click();
+		a.setAttribute('download', `[INVOICE]-${invoiceID}.json`);
+		a.href = URL.createObjectURL(file);
+		a.click();
 	}
 
-	async function loadJSON(){
-
-	}
+	async function loadJSON() {}
 
 	function calulateWidth() {
 		pw = document.querySelector('#invoice').offsetWidth + 'px';
@@ -208,102 +203,6 @@
 </script>
 
 <div id="container">
-	<div id="previewArea">
-		<div id="invoice">
-			<div id="page" style="--page-width:{pw}">
-				<div id="header">
-					<div id="sender">
-						{#if store.logo}
-							<div id="logo"><Logo></Logo></div>
-							<p>{store.sender.name}</p>
-						{:else}
-							<h3>{store.sender.name}</h3>
-						{/if}
-
-						<p>{store.sender.address.street} {store.sender.address.number}</p>
-						<p>{store.sender.address.code} {store.sender.address.region}</p>
-						<p>
-							{getCountryData(store.sender.address.country).name}
-							{store.sender.address.country}
-						</p>
-						<p>{store.sender.address.mail}</p>
-						<p>{store.sender.address.website}</p>
-					</div>
-					<div id="receiver">
-						<h3>{labels.invoice}</h3>
-						<p>{invoiceID}</p>
-						<p>{formatDate}</p>
-						<h3>{store.receiver.name}</h3>
-						<p>{store.receiver.address.street} {store.receiver.address.number}</p>
-						<p>{store.receiver.address.code} {store.receiver.address.region}</p>
-						<p>
-							{getCountryData(store.receiver.address.country).name}
-							{store.receiver.address.country}
-						</p>
-					</div>
-				</div>
-				<div id="body">
-					<div>
-						<div id="table">
-							<Table
-								on:newTotal={setNewTotal}
-								currencyToggle={store.currencyToggle}
-								exemptToggle={store.exemptToggle}
-								tvaToggle={store.tvaToggle}
-								tva={store.rate}
-								bind:totals
-								services={store.services}
-								{labels}
-							></Table>
-						</div>
-					</div>
-				</div>
-				<div id="footer">
-					<div id="info">
-						<h3>{labels.account.toUpperCase()}</h3>
-						<p>{store.sender.name}</p>
-						<p>{store.sender.address.street} {store.sender.address.number}</p>
-						<p>{store.sender.address.code} {store.sender.address.region}</p>
-						<p>{getCountryData(store.receiver.address.country).name}</p>
-						<h3>IBAN</h3>
-						<p>{store.sender.iban}</p>
-						<div class="split">
-							<div>
-								<h3>{labels.currency.toUpperCase()}</h3>
-								<p>{currency}</p>
-							</div>
-							<div>
-								<h3>{labels.amount.toUpperCase()}</h3>
-								<p>{totals.ttc}</p>
-							</div>
-						</div>
-					</div>
-					<div id="qr">
-						<img src={qr} alt="" />
-					</div>
-					<div id="contact">
-						<h3>{labels.tva} N°</h3>
-						<p>{store.vatno}</p>
-
-						<h3>REFERENCE</h3>
-						<p>{invoiceID}</p>
-						<h3>CONTACT</h3>
-						<p>{store.sender.address.mail}</p>
-						<div class="split">
-							<div>
-								<h3>{labels.currency.toUpperCase()}</h3>
-								<p>{currency}</p>
-							</div>
-							<div>
-								<h3>{labels.amount.toUpperCase()}</h3>
-								<p>{totals.ttc}</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 	<div id="formArea">
 		<div id="form">
 			<Section title="Sender">
@@ -401,6 +300,102 @@
 			<Button col="green" type="big" label="✱ download ⸜(രᴗര๑)⸝ ✱" on:click={generatePDF} />
 		</div>
 	</div>
+	<div id="previewArea">
+		<div id="invoice">
+			<div id="page" style="--page-width:{pw}">
+				<div id="header">
+					<div id="sender">
+						{#if store.logo}
+							<div id="logo"><Logo></Logo></div>
+							<p>{store.sender.name}</p>
+						{:else}
+							<h3>{store.sender.name}</h3>
+						{/if}
+
+						<p>{store.sender.address.street} {store.sender.address.number}</p>
+						<p>{store.sender.address.code} {store.sender.address.region}</p>
+						<p>
+							{getCountryData(store.sender.address.country).name}
+							{store.sender.address.country}
+						</p>
+						<p>{store.sender.address.mail}</p>
+						<p>{store.sender.address.website}</p>
+					</div>
+					<div id="receiver">
+						<h3>{labels.invoice}</h3>
+						<p>{invoiceID}</p>
+						<p>{formatDate}</p>
+						<h3>{store.receiver.name}</h3>
+						<p>{store.receiver.address.street} {store.receiver.address.number}</p>
+						<p>{store.receiver.address.code} {store.receiver.address.region}</p>
+						<p>
+							{getCountryData(store.receiver.address.country).name}
+							{store.receiver.address.country}
+						</p>
+					</div>
+				</div>
+				<div id="body">
+					<div>
+						<div id="table">
+							<Table
+								on:newTotal={setNewTotal}
+								currencyToggle={store.currencyToggle}
+								exemptToggle={store.exemptToggle}
+								tvaToggle={store.tvaToggle}
+								tva={store.rate}
+								bind:totals
+								services={store.services}
+								{labels}
+							></Table>
+						</div>
+					</div>
+				</div>
+				<div id="footer">
+					<div id="info">
+						<h3>{labels.account.toUpperCase()}</h3>
+						<p>{store.sender.name}</p>
+						<p>{store.sender.address.street} {store.sender.address.number}</p>
+						<p>{store.sender.address.code} {store.sender.address.region}</p>
+						<p>{getCountryData(store.receiver.address.country).name}</p>
+						<h3>IBAN</h3>
+						<p>{store.sender.iban}</p>
+						<div class="split">
+							<div>
+								<h3>{labels.currency.toUpperCase()}</h3>
+								<p>{currency}</p>
+							</div>
+							<div>
+								<h3>{labels.amount.toUpperCase()}</h3>
+								<p>{totals.ttc}</p>
+							</div>
+						</div>
+					</div>
+					<div id="qr">
+						<img src={qr} alt="" />
+					</div>
+					<div id="contact">
+						<h3>{labels.tva} N°</h3>
+						<p>{store.vatno}</p>
+
+						<h3>REFERENCE</h3>
+						<p>{invoiceID}</p>
+						<h3>CONTACT</h3>
+						<p>{store.sender.address.mail}</p>
+						<div class="split">
+							<div>
+								<h3>{labels.currency.toUpperCase()}</h3>
+								<p>{currency}</p>
+							</div>
+							<div>
+								<h3>{labels.amount.toUpperCase()}</h3>
+								<p>{totals.ttc}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <SavePicker bind:store bind:savefiles bind:this={savePicker}></SavePicker>
 
@@ -440,31 +435,40 @@
 	#container > div {
 		box-sizing: border-box;
 		overflow-y: scroll;
-		padding: 3rem;
+		overflow-x: visible;
 	}
-	#formArea {
-		width: 40vw;
-		padding-right: 0 !important;
+	#container > #formArea {
+		width: 100%;
+		height: 100vh;
+		padding-left: 0;
+		padding: 3rem;
 	}
 	#container > div::-webkit-scrollbar {
 		display: none;
 	}
-	#previewArea {
+	#container > #previewArea {
 		box-sizing: border-box;
-		width: 60vw;
+		width: 100%;
 		max-width: 950px;
+		height: 100vh;
+		padding: 3rem 3rem 3rem 1.5rem;
 	}
 	#invoice {
 		box-sizing: border-box;
 		background-color: white !important;
-		box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.3);
+		box-shadow: 0px 0px 1.5rem 0px rgba(0, 0, 0, 0.3);
 		border-radius: 10px;
+		width: 100%;
+		aspect-ratio: 1/1.414;
 	}
 	#page {
 		user-select: none;
 		box-sizing: border-box;
 		width: 100%;
-		height: calc(var(--page-width) * 1.41);
+		margin: auto;
+		aspect-ratio: 1/1.414;
+		max-width: 100%;
+		max-height: 100%;
 		display: flex;
 		position: relative;
 		flex-direction: column;
@@ -525,8 +529,7 @@
 		justify-content: space-between;
 		font-size: var(--font-small);
 	}
-	#footer div {
-	}
+
 	#footer h3 {
 		font-size: var(--font-small);
 		color: rgb(170, 170, 170);
@@ -547,6 +550,8 @@
 		width: 100%;
 	}
 	#footer #contact {
+		align-items: left;
+
 		display: flex;
 		flex-direction: column;
 		width: calc(100% / 3);
@@ -564,5 +569,28 @@
 		justify-content: space-between;
 		width: 100%;
 		gap: 1rem;
+	}
+
+	@media screen and (max-width: 850px) {
+		#container {
+			display: block;
+			overscroll-behavior-x: contain;
+			scroll-snap-type: x mandatory;
+			max-width: 100vw;
+			max-height: 100vh;
+			overflow: scroll;
+		}
+
+		#container > div {
+			width: 100%;
+			scroll-snap-align: center;
+		}
+		#container #previewArea {
+			display: none;
+		}
+		#container #formArea {
+			padding: 1rem;
+			min-width: 100vw;
+		}
 	}
 </style>

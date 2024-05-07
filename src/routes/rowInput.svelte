@@ -32,7 +32,7 @@
 		<option value="2">{labels.units[2]}</option>
 		<option value="3">-</option>
 	</select>
-	<input type="number" bind:value={entry.amount} />
+	<input id="quantity" type="number" bind:value={entry.amount} />
 	<input class="last" type="number" bind:value={entry.price} />
 	<Button label="✱" on:click={addSub}></Button>
 </div>
@@ -74,8 +74,11 @@
 		transition: 0.1s ease-in-out;
 		box-shadow: 0px 0px;
 	}
+	#quantity {
+		width: 50%;
+	}
 	select {
-		width: 100%;
+		width: 150%;
 		text-align: end;
 		box-sizing: border-box;
 		border: 2px solid black;
