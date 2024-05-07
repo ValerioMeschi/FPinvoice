@@ -126,7 +126,7 @@
 		let markup = document.querySelector('#invoice').innerHTML;
 		let s = '';
 		for (const sheet of document.styleSheets) {
-			if (sheet != undefined && sheet.href == null) {
+			if (sheet != undefined) {
 				for (const rule of sheet.cssRules) {
 					if (rule != undefined) {
 						s += rule.cssText;
