@@ -1,19 +1,18 @@
 {
-  "name": "fpinvoice",
-  "version": "0.0.1",
-  "type": "module",
-  "private": true,
-  "main": "index.js",
-  "scripts": {
-    "start": "bun ./index.js"
-  },
-  "dependencies": {
-    "cookie": "latest",
-    "countries-list": "^3.1.0",
-    "devalue": "latest",
-    "puppeteer": "^22.7.0",
-    "qrcode": "^1.5.3",
-    "set-cookie-parser": "latest",
-    "typescript": "^5.4.5"
-  }
+	"name": "fpinvoice",
+	"version": "0.0.1",
+	"type": "module",
+	"private": true,
+	"main": "index.js",
+	"scripts": {
+		"start": "bun ./index.js"
+	},
+	"dependencies": {
+		"countries-list": "^3.1.0",
+		"puppeteer": "^22.7.0",
+		"qrcode": "^1.5.3",
+		"cookie": "latest",
+		"devalue": "latest",
+		"set-cookie-parser": "latest"
+	}
 }

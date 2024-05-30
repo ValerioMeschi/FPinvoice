@@ -142,9 +142,14 @@
 		};
 		const reqOptions = {
 			method: 'POST',
-			body: JSON.stringify(data)
+			body: JSON.stringify(data),
+			credentials: 'same-origin',
+			mode: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		};
-		const request = new Request('/scrape', reqOptions);
+		const request = new Request('/scrape/', reqOptions);
 		const response = await fetch(request);
 		if (response.status == 200) {
 			let content = await response.blob();
@@ -161,6 +166,7 @@
 			document.body.removeChild(a);
 			calulateWidth();
 		} else {
+			console.log(response);
 			throw new Error('Something went wrong on the server! 😱');
 		}
 	}
