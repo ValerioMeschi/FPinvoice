@@ -34,12 +34,7 @@
 	{:else if type == 'iban'}
 		<input
 			type="text"
-			inputmode="numeric"
-			pattern="[0-9\s]{(13, 19)}"
-			autocomplete="cc-number"
-			maxlength="19"
-			placeholder="xxxx xxxx xxxx xxxx"
-			name="field"
+			
 			bind:value
 		/>
 	{:else if type == 'toggle'}
