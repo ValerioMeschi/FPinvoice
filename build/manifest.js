@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["img/logo.svg","favicon.png","defaults.json","sfx/catching.mp3"]),
-	mimeTypes: {".svg":"image/svg+xml",".png":"image/png",".json":"application/json",".mp3":"audio/mpeg"},
+	assets: new Set(["defaults.json","favicon.png","img/logo.svg","sfx/catching.mp3"]),
+	mimeTypes: {".json":"application/json",".png":"image/png",".svg":"image/svg+xml",".mp3":"audio/mpeg"},
 	_: {
-		client: {"start":"_app/immutable/entry/start.CA2z4yi8.js","app":"_app/immutable/entry/app.BUMejWbP.js","imports":["_app/immutable/entry/start.CA2z4yi8.js","_app/immutable/chunks/entry.D5FuvRyZ.js","_app/immutable/chunks/scheduler.BTE4Y-Vv.js","_app/immutable/entry/app.BUMejWbP.js","_app/immutable/chunks/scheduler.BTE4Y-Vv.js","_app/immutable/chunks/index.CZ2boC6D.js"],"stylesheets":[],"fonts":[],"uses_env_dynamic_public":false},
+		client: {"start":"_app/immutable/entry/start.DIglKAYW.js","app":"_app/immutable/entry/app.C9Z-ztW4.js","imports":["_app/immutable/entry/start.DIglKAYW.js","_app/immutable/chunks/entry.B_X3f54A.js","_app/immutable/chunks/scheduler.BTE4Y-Vv.js","_app/immutable/entry/app.C9Z-ztW4.js","_app/immutable/chunks/scheduler.BTE4Y-Vv.js","_app/immutable/chunks/index.CZ2boC6D.js"],"stylesheets":[],"fonts":[],"uses_env_dynamic_public":false},
 		nodes: [
 			__memo(() => import('./server/nodes/0.js')),
 			__memo(() => import('./server/nodes/1.js')),
