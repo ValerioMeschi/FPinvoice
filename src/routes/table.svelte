@@ -71,7 +71,7 @@
 				sub: [],
 				unit: '',
 				amount: '',
-				legend: labels.tva + ' ' + tvaC + '%',
+				legend: exemptToggle ? labels.tva + ' exempt.' : labels.tva + ' ' + tvaC + '%',
 				total: exemptToggle ? '- - -' : Math.floor(totals.tva * 100) / 100
 			}}
 			{labels}

@@ -49,7 +49,8 @@
         "HT": "ET",
         "account": "Account ",
         "currency": "currency",
-        "amount": "amount"
+        "amount": "amount",
+        "pay": "Payment due within 30 days"
     },
     "labelsFR": {
         "invoice": "FACTURE",
@@ -69,7 +70,8 @@
         "HT": "HT",
         "account": "Compte",
         "currency": "devise",
-        "amount": "montant"
+        "amount": "montant",
+        "pay": "A payer dans les 30 jours"
     },
     "project": {
         "name": "Digilunch",

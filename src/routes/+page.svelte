@@ -42,7 +42,8 @@
 	}
 
 	$: currency = store.currencyToggle ? 'EUR' : 'CHF';
-	$: labels = store.langToggle ? store.labelsFR : store.labelsEN;
+	$: labels = store.langToggle ? store.labelsFR : store.labelsEN
+	console.log(store)
 	const date = new Date();
 	let year = date.getFullYear().toString();
 	let formatDate = `${pad(date.getDate(), 2)}.${pad(date.getMonth() + 1, 2)}.${year.slice(2)}`;
@@ -331,6 +332,7 @@
 						<h3>{labels.invoice}</h3>
 						<p>{invoiceID}</p>
 						<p>{formatDate}</p>
+						<p>{labels.pay}</p>
 						<h3>{store.receiver.name}</h3>
 						<p>{store.receiver.address.street} {store.receiver.address.number}</p>
 						<p>{store.receiver.address.code} {store.receiver.address.region}</p>
@@ -397,6 +399,7 @@
 								<p>{totals.ttc}</p>
 							</div>
 						</div>
+						
 					</div>
 				</div>
 			</div>
