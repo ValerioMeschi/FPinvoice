@@ -24,6 +24,7 @@
 
 	let savefiles = [];
 	let savePicker;
+	let showDelay = true;
 
 	let sfx;
 	if (browser) {
@@ -42,8 +43,8 @@
 	}
 
 	$: currency = store.currencyToggle ? 'EUR' : 'CHF';
-	$: labels = store.langToggle ? store.labelsFR : store.labelsEN
-	console.log(store)
+	$: labels = store.langToggle ? store.labelsFR : store.labelsEN;
+	console.log(store);
 	const date = new Date();
 	let year = date.getFullYear().toString();
 	let formatDate = `${pad(date.getDate(), 2)}.${pad(date.getMonth() + 1, 2)}.${year.slice(2)}`;
@@ -241,6 +242,12 @@
 					bind:value={store.receiver.address.country}
 					label="Country"
 				></Input>
+				<Input
+					bind:flipped={showDelay}
+					type="toggle"
+					label="Délai"
+					toggleValues={{ on: 'show', off: 'hide' }}
+				></Input>
 			</Section>
 			<Section title="Project">
 				<Input bind:value={store.project.name} label="Name"></Input>
@@ -332,7 +339,9 @@
 						<h3>{labels.invoice}</h3>
 						<p>{invoiceID}</p>
 						<p>{formatDate}</p>
-						<p>{labels.pay}</p>
+						{#if showDelay}
+							<p>{labels.pay}</p>
+						{/if}
 						<h3>{store.receiver.name}</h3>
 						<p>{store.receiver.address.street} {store.receiver.address.number}</p>
 						<p>{store.receiver.address.code} {store.receiver.address.region}</p>
@@ -399,7 +408,6 @@
 								<p>{totals.ttc}</p>
 							</div>
 						</div>
-						
 					</div>
 				</div>
 			</div>
