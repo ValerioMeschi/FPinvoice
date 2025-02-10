@@ -1,0 +1,5 @@
+app:
+  container_name: fpinvoice
+  working_dir: ./
+  build:
+    context: ./
