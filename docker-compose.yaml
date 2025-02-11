@@ -1,6 +1,7 @@
 services:
   app:
     container_name: fpinvoice
-    working_dir: ./
+    ports:
+      - '3001:3000'
     build:
       context: ./
