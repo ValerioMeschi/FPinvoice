@@ -246,7 +246,7 @@
 					bind:flipped={showDelay}
 					type="toggle"
 					label="Délai"
-					toggleValues={{ on: 'show', off: 'hide' }}
+					toggleValues={{ on: 'on', off: 'off' }}
 				></Input>
 			</Section>
 			<Section title="Project">
