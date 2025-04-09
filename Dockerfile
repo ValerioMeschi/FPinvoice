@@ -21,6 +21,7 @@ RUN bun run build
 FROM oven/bun
 
 COPY --from=prerelease /usr/src/app/build ./build
+COPY --from=prerelease /usr/src/app/static ./static
 COPY --from=prerelease /usr/src/app/package.json .
 
 RUN apt-get update && apt-get install gnupg wget -y && \
